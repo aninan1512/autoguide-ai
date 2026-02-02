@@ -76,7 +76,7 @@ autoguide-ai/
 ├── README.md
 └── .gitignore
     '''text
-▶️ How to Run Locally
+## ▶️ How to Run Locally
 1️⃣ Clone the repository
 git clone https://github.com/your-username/autoguide-ai.git
 cd autoguide-ai
