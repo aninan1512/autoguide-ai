@@ -58,25 +58,29 @@ This project focuses on **practical problem-solving**, **clean UX**, and **real-
 - Environment-based configuration (`.env`)
 
 ---
-
 ## 📁 Project Structure
 
-```text
+
 autoguide-ai/
 │
-├── frontend/          # React frontend (Vite)
+├── frontend/                 # React frontend (Vite)
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
 │   └── src/
-│       └── App.jsx
+│       ├── App.jsx
+│       └── main.jsx
 │
-├── backend/           # Node.js + Express backend
+├── backend/                  # Node.js + Express backend
 │   ├── server.js
 │   ├── db.js
+│   ├── package.json
 │   └── .env.example
 │
-├── README.md
-└── .gitignore
-    '''text
-## ▶️ How to Run Locally
+├── README.md                 # Project documentation
+└── .gitignore                # Git ignore rules
+
+▶️ How to Run Locally
 1️⃣ Clone the repository
 git clone https://github.com/your-username/autoguide-ai.git
 cd autoguide-ai
@@ -168,3 +172,4 @@ B.Sc. Computer Science
 Full-Stack Developer
 
 GitHub: https://github.com/aninan1512
+
