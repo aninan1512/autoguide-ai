@@ -11,6 +11,8 @@ export default function Guide() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
 
+  const [regenLoading, setRegenLoading] = useState(false);
+
   async function loadGuide() {
     try {
       setLoading(true);
@@ -27,6 +29,23 @@ export default function Guide() {
   useEffect(() => {
     loadGuide();
   }, [id]);
+
+  async function regenerate() {
+    try {
+      setRegenLoading(true);
+      const { data } = await api.post(`/api/guides/${id}/regenerate`);
+      setGuide((prev) => ({
+        ...prev,
+        aiAnswer: data.aiAnswer,
+        chat: data.chat,
+      }));
+    } catch (e) {
+      console.error(e);
+      alert("Failed to regenerate. Please try again.");
+    } finally {
+      setRegenLoading(false);
+    }
+  }
 
   if (loading) return <div style={{ padding: 24 }}>Loading guide...</div>;
   if (err) return <div style={{ padding: 24, color: "crimson" }}>{err}</div>;
@@ -45,7 +64,22 @@ export default function Guide() {
             </p>
           </div>
 
-          <div style={{ alignSelf: "flex-start" }}>
+          <div style={{ alignSelf: "flex-start", display: "flex", gap: 12 }}>
+            <button
+              onClick={regenerate}
+              disabled={regenLoading}
+              style={{
+                padding: "10px 12px",
+                borderRadius: 12,
+                border: "1px solid #111",
+                background: regenLoading ? "#eee" : "#111",
+                color: regenLoading ? "#333" : "white",
+                cursor: regenLoading ? "not-allowed" : "pointer",
+              }}
+            >
+              {regenLoading ? "Regenerating..." : "Regenerate Answer"}
+            </button>
+
             <Link to="/" style={{ textDecoration: "none" }}>
               ← Back to Dashboard
             </Link>
@@ -84,7 +118,7 @@ export default function Guide() {
             }}
           >
             <h3 style={{ marginTop: 0 }}>Ask a follow-up</h3>
-            <ChatBox guideId={id} />
+            <ChatBox guideId={id} initialMessages={guide.chat || []} />
           </div>
         </div>
       </div>

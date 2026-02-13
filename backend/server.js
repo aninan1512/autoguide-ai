@@ -14,7 +14,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      process.env.FRONTEND_URL, // optional if you deploy later
+      process.env.FRONTEND_URL,
     ].filter(Boolean),
     credentials: true,
   })
@@ -22,9 +22,7 @@ app.use(
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-app.get("/health", (req, res) => {
-  res.json({ ok: true });
-});
+app.get("/health", (req, res) => res.json({ ok: true }));
 
 function buildGuidePrompt({ make, model, year, question }) {
   return `
@@ -33,16 +31,16 @@ You are an automotive maintenance assistant.
 Vehicle: ${year} ${make} ${model}
 User question: ${question}
 
-Return a clear, structured maintenance guide with these sections (use headings):
+Return a clear, structured maintenance guide with these sections (use headings exactly):
 
-1) Summary
-2) Safety Warnings
-3) Tools Needed
-4) Parts / Supplies
-5) Step-by-step Instructions (numbered)
-6) Common Mistakes to Avoid
-7) Estimated Time + Difficulty
-8) When to Stop and Call a Mechanic
+## Summary
+## Safety Warnings
+## Tools Needed
+## Parts / Supplies
+## Step-by-step Instructions
+## Common Mistakes to Avoid
+## Estimated Time + Difficulty
+## When to Stop and Call a Mechanic
 
 Rules:
 - Keep it practical and beginner-friendly.
@@ -51,10 +49,15 @@ Rules:
 `;
 }
 
-function buildChatPrompt({ vehicle, originalQuestion, aiAnswer, followUp }) {
+function buildChatPrompt({ vehicle, originalQuestion, aiAnswer, chatSoFar, followUp }) {
+  const history = (chatSoFar || [])
+    .slice(-10) // keep last 10 messages for context
+    .map((m) => `${m.role.toUpperCase()}: ${m.text}`)
+    .join("\n");
+
   return `
 You are a helpful automotive assistant.
-You must ONLY answer based on the provided context. If context is missing, ask a clarifying question.
+Answer using ONLY the provided context. If context is missing, ask a clarifying question.
 
 Vehicle: ${vehicle.year} ${vehicle.make} ${vehicle.model}
 
@@ -63,10 +66,13 @@ Original question: ${originalQuestion}
 Original guide answer:
 ${aiAnswer}
 
+Recent chat history:
+${history || "(none)"}
+
 User follow-up question:
 ${followUp}
 
-Reply in a short, clear way. Use bullet points if helpful.
+Reply clearly and concisely. Use bullet points when helpful.
 `;
 }
 
@@ -86,13 +92,18 @@ app.post("/api/guides", async (req, res) => {
       input: prompt,
     });
 
-    const aiAnswer =
-      response.output_text?.trim() || "No answer returned. Please try again.";
+    const aiAnswer = (response.output_text || "").trim() || "No answer returned. Please try again.";
 
     const doc = await Guide.create({
       vehicle: { make, model, year },
       question,
       aiAnswer,
+      chat: [
+        {
+          role: "assistant",
+          text: "Ask anything about the guide (tools, steps, safety, parts, etc.).",
+        },
+      ],
     });
 
     res.json({
@@ -108,7 +119,7 @@ app.post("/api/guides", async (req, res) => {
   }
 });
 
-// ✅ Recent searches (left sidebar)
+// ✅ Recent searches (sidebar)
 app.get("/api/searches", async (req, res) => {
   try {
     const limit = Math.min(Number(req.query.limit || 10), 30);
@@ -125,7 +136,7 @@ app.get("/api/searches", async (req, res) => {
   }
 });
 
-// ✅ Fetch one guide (Results page)
+// ✅ Fetch one guide (now includes chat)
 app.get("/api/guides/:id", async (req, res) => {
   try {
     const doc = await Guide.findById(req.params.id);
@@ -138,7 +149,7 @@ app.get("/api/guides/:id", async (req, res) => {
   }
 });
 
-// ✅ Follow-up chat about the answer
+// ✅ Follow-up chat (persist user + assistant messages)
 app.post("/api/chat", async (req, res) => {
   try {
     const { guideId, message } = req.body;
@@ -150,10 +161,14 @@ app.post("/api/chat", async (req, res) => {
     const guide = await Guide.findById(guideId);
     if (!guide) return res.status(404).json({ error: "Guide not found." });
 
+    // Save user message first
+    guide.chat.push({ role: "user", text: message });
+
     const prompt = buildChatPrompt({
       vehicle: guide.vehicle,
       originalQuestion: guide.question,
       aiAnswer: guide.aiAnswer,
+      chatSoFar: guide.chat,
       followUp: message,
     });
 
@@ -162,13 +177,56 @@ app.post("/api/chat", async (req, res) => {
       input: prompt,
     });
 
-    const reply =
-      response.output_text?.trim() || "I couldn't generate a reply. Try again.";
+    const reply = (response.output_text || "").trim() || "I couldn't generate a reply. Try again.";
 
-    res.json({ reply });
+    // Save assistant reply
+    guide.chat.push({ role: "assistant", text: reply });
+
+    await guide.save();
+
+    res.json({ reply, chat: guide.chat });
   } catch (err) {
     console.error("POST /api/chat error:", err);
     res.status(500).json({ error: "Failed to chat." });
+  }
+});
+
+// ✅ Regenerate answer (refresh AI answer; optionally reset chat)
+app.post("/api/guides/:id/regenerate", async (req, res) => {
+  try {
+    const guide = await Guide.findById(req.params.id);
+    if (!guide) return res.status(404).json({ error: "Guide not found." });
+
+    const prompt = buildGuidePrompt({
+      make: guide.vehicle.make,
+      model: guide.vehicle.model,
+      year: guide.vehicle.year,
+      question: guide.question,
+    });
+
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: prompt,
+    });
+
+    const newAnswer = (response.output_text || "").trim() || guide.aiAnswer;
+
+    guide.aiAnswer = newAnswer;
+
+    // reset chat so follow-ups match the new answer
+    guide.chat = [
+      {
+        role: "assistant",
+        text: "New guide generated. Ask follow-up questions about this updated answer.",
+      },
+    ];
+
+    await guide.save();
+
+    res.json({ aiAnswer: guide.aiAnswer, chat: guide.chat });
+  } catch (err) {
+    console.error("POST /api/guides/:id/regenerate error:", err);
+    res.status(500).json({ error: "Failed to regenerate guide." });
   }
 });
 

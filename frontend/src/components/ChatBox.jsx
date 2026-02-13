@@ -1,23 +1,38 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import api from "../api/client";
 
-export default function ChatBox({ guideId }) {
-  const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      text: "Ask anything about the guide above (tools, steps, safety, parts, etc.).",
-    },
-  ]);
+export default function ChatBox({ guideId, initialMessages }) {
+  const seeded = useMemo(() => {
+    if (initialMessages && initialMessages.length) return initialMessages;
+    return [
+      {
+        role: "assistant",
+        text: "Ask anything about the guide above (tools, steps, safety, parts, etc.).",
+      },
+    ];
+  }, [initialMessages]);
 
+  const [messages, setMessages] = useState(seeded);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [err, setErr] = useState("");
 
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    setMessages(seeded);
+  }, [seeded]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, sending]);
+
   async function send() {
     setErr("");
     const msg = input.trim();
-    if (!msg) return;
+    if (!msg || sending) return;
 
+    // optimistic UI
     setMessages((prev) => [...prev, { role: "user", text: msg }]);
     setInput("");
 
@@ -28,7 +43,12 @@ export default function ChatBox({ guideId }) {
         message: msg,
       });
 
-      setMessages((prev) => [...prev, { role: "assistant", text: data.reply }]);
+      // backend returns full updated chat history
+      if (data?.chat?.length) {
+        setMessages(data.chat.map((m) => ({ role: m.role, text: m.text })));
+      } else {
+        setMessages((prev) => [...prev, { role: "assistant", text: data.reply }]);
+      }
     } catch (e) {
       console.error(e);
       setErr("Failed to send. Try again.");
@@ -67,9 +87,9 @@ export default function ChatBox({ guideId }) {
             <div style={{ whiteSpace: "pre-wrap", fontSize: 14 }}>{m.text}</div>
           </div>
         ))}
-        {sending ? (
-          <div style={{ fontSize: 13, color: "#666" }}>Typing...</div>
-        ) : null}
+
+        {sending ? <div style={{ fontSize: 13, color: "#666" }}>Typing...</div> : null}
+        <div ref={bottomRef} />
       </div>
 
       <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
@@ -106,8 +126,9 @@ export default function ChatBox({ guideId }) {
       {err ? <div style={{ color: "crimson", marginTop: 8 }}>{err}</div> : null}
 
       <div style={{ color: "#777", fontSize: 12, marginTop: 10 }}>
-        Tip: Ask “What does this step mean?” or “What tools do I need exactly?”
+        Tip: Ask “What does torque spec mean?” or “Which tools are essential?”
       </div>
     </div>
   );
 }
+
