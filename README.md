@@ -10,7 +10,7 @@ Users can enter a vehicle’s make, model, and year, ask a maintenance question 
 ## 🌐 Live Demo
 
 Frontend:  
-https://YOUR-VERCEL-URL.vercel.app  
+https://autoguide-ai.vercel.app
 
 Backend API:  
 https://autoguide-ai.onrender.com/health  
