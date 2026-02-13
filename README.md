@@ -141,17 +141,13 @@ Handling real issues like API limits and error states
 
 It was built with recruiter readability and real usability in mind.
 
-📸 Demo
+## 📸 Screenshots
 
-A short demo video and screenshots are included in the repository to showcase the full workflow:
+### Main Interface
+![Main UI](screenshots/Main.png)
 
-Vehicle input
-
-Question submission
-
-AI-generated results
-
-Recent search reuse
+### Generated Maintenance Guide
+![Results](screenshots/Answer.png)
 
 🚀 Future Improvements
 
