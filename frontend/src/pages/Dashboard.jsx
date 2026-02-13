@@ -50,8 +50,6 @@ export default function Dashboard() {
         year,
         question,
       });
-
-      // Go to results page
       navigate(`/guide/${data.id}`);
     } catch (e) {
       console.error(e);
@@ -62,99 +60,110 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar */}
-      <div
-        style={{
-          width: 340,
-          borderRight: "1px solid #e6e6e6",
-          padding: 16,
-          background: "#fafafa",
-        }}
-      >
-        <h2 style={{ marginTop: 0 }}>Recent Searches</h2>
-        <RecentSearches
-          items={recent}
-          loading={loadingRecent}
-          onOpen={(id) => navigate(`/guide/${id}`)}
-          onRefresh={loadRecent}
-        />
-      </div>
-
-      {/* Main */}
-      <div style={{ flex: 1, padding: 24 }}>
-        <h1 style={{ marginTop: 0 }}>AutoGuide AI 🚗🤖</h1>
-        <p style={{ maxWidth: 760 }}>
-          Enter your vehicle details and ask a maintenance question. You’ll get a
-          structured, step-by-step guide with tools, parts, safety warnings, and
-          best practices.
-        </p>
-
-        <div
-          style={{
-            maxWidth: 760,
-            border: "1px solid #e6e6e6",
-            borderRadius: 12,
-            padding: 16,
-            background: "white",
-          }}
-        >
-          <h3 style={{ marginTop: 0 }}>New Question</h3>
-
-          <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-              <input
-                value={make}
-                onChange={(e) => setMake(e.target.value)}
-                placeholder="Make (e.g., Ford)"
-                style={{ padding: 10, borderRadius: 10, border: "1px solid #ddd" }}
-              />
-              <input
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                placeholder="Model (e.g., Focus)"
-                style={{ padding: 10, borderRadius: 10, border: "1px solid #ddd" }}
-              />
-              <input
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                placeholder="Year (e.g., 2016)"
-                style={{ padding: 10, borderRadius: 10, border: "1px solid #ddd" }}
+    <div className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-7xl px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6">
+          {/* Sidebar */}
+          <aside className="rounded-2xl border bg-white shadow-sm">
+            <div className="p-4 border-b">
+              <h2 className="text-lg font-semibold">Recent Searches</h2>
+              <p className="text-sm text-gray-500 mt-1">
+                Click any item to reopen the guide.
+              </p>
+            </div>
+            <div className="p-4">
+              <RecentSearches
+                items={recent}
+                loading={loadingRecent}
+                onOpen={(id) => navigate(`/guide/${id}`)}
+                onRefresh={loadRecent}
               />
             </div>
+          </aside>
 
-            <textarea
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Ask a question (e.g., How do I change my brake pads?)"
-              rows={4}
-              style={{ padding: 10, borderRadius: 10, border: "1px solid #ddd" }}
-            />
+          {/* Main */}
+          <main className="space-y-6">
+            <header className="rounded-2xl border bg-white shadow-sm p-6">
+              <h1 className="text-2xl font-bold">AutoGuide AI 🚗🤖</h1>
+              <p className="text-gray-600 mt-2 max-w-3xl">
+                Enter your vehicle details and ask a maintenance question. You’ll get a structured,
+                step-by-step guide with tools, parts, safety warnings, and best practices.
+              </p>
+            </header>
 
-            {error ? (
-              <div style={{ color: "crimson", fontSize: 14 }}>{error}</div>
-            ) : null}
+            <section className="rounded-2xl border bg-white shadow-sm p-6">
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <h3 className="text-lg font-semibold">New Question</h3>
+                <span className="text-xs text-gray-500">
+                  Educational use only — verify with your owner’s manual/mechanic.
+                </span>
+              </div>
 
-            <button
-              type="submit"
-              disabled={submitting}
-              style={{
-                padding: "10px 14px",
-                borderRadius: 12,
-                border: "1px solid #111",
-                background: submitting ? "#eee" : "#111",
-                color: submitting ? "#333" : "white",
-                cursor: submitting ? "not-allowed" : "pointer",
-                width: 180,
-              }}
-            >
-              {submitting ? "Generating..." : "Generate Guide"}
-            </button>
-          </form>
+              <form onSubmit={onSubmit} className="mt-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <input
+                    value={make}
+                    onChange={(e) => setMake(e.target.value)}
+                    placeholder="Make (e.g., Ford)"
+                    className="w-full rounded-xl border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  />
+                  <input
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                    placeholder="Model (e.g., Focus)"
+                    className="w-full rounded-xl border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  />
+                  <input
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    placeholder="Year (e.g., 2018)"
+                    className="w-full rounded-xl border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  />
+                </div>
 
-          <p style={{ marginTop: 14, color: "#666", fontSize: 13 }}>
-            ⚠️ Educational use only. Always follow your owner’s manual and safety procedures.
-          </p>
+                <textarea
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="Ask a question (e.g., How do I change my brake pads?)"
+                  rows={4}
+                  className="w-full rounded-xl border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/20"
+                />
+
+                {error ? (
+                  <div className="text-sm text-red-600">{error}</div>
+                ) : null}
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="inline-flex items-center justify-center rounded-xl bg-black px-4 py-2 text-white font-medium hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {submitting ? "Generating..." : "Generate Guide"}
+                </button>
+              </form>
+            </section>
+
+            <section className="rounded-2xl border bg-white shadow-sm p-6">
+              <h4 className="font-semibold">Try these prompts</h4>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {[
+                  "How to change engine oil?",
+                  "Brake pads replacement steps",
+                  "How to check coolant level?",
+                  "What tools do I need to change a battery?",
+                ].map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setQuestion(t)}
+                    className="rounded-full border px-3 py-1 text-sm hover:bg-gray-50"
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </section>
+          </main>
         </div>
       </div>
     </div>

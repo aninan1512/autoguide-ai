@@ -10,7 +10,6 @@ export default function Guide() {
   const [guide, setGuide] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
-
   const [regenLoading, setRegenLoading] = useState(false);
 
   async function loadGuide() {
@@ -47,81 +46,60 @@ export default function Guide() {
     }
   }
 
-  if (loading) return <div style={{ padding: 24 }}>Loading guide...</div>;
-  if (err) return <div style={{ padding: 24, color: "crimson" }}>{err}</div>;
+  if (loading) return <div className="p-6">Loading guide...</div>;
+  if (err) return <div className="p-6 text-red-600">{err}</div>;
   if (!guide) return null;
 
   const title = `${guide.vehicle.year} ${guide.vehicle.make} ${guide.vehicle.model}`;
 
   return (
-    <div style={{ minHeight: "100vh", padding: 24, background: "#fafafa" }}>
-      <div style={{ maxWidth: 980, margin: "0 auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-          <div>
-            <h1 style={{ margin: 0 }}>{title}</h1>
-            <p style={{ marginTop: 6, color: "#444" }}>
-              <b>Question:</b> {guide.question}
-            </p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-7xl px-4 py-6">
+        <header className="rounded-2xl border bg-white shadow-sm p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold">{title}</h1>
+              <p className="mt-2 text-gray-700">
+                <span className="font-semibold">Question:</span> {guide.question}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={regenerate}
+                disabled={regenLoading}
+                className="rounded-xl bg-black px-4 py-2 text-white font-medium hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {regenLoading ? "Regenerating..." : "Regenerate Answer"}
+              </button>
+
+              <Link to="/" className="text-sm font-medium text-blue-600 hover:underline">
+                ← Back to Dashboard
+              </Link>
+            </div>
           </div>
+        </header>
 
-          <div style={{ alignSelf: "flex-start", display: "flex", gap: 12 }}>
-            <button
-              onClick={regenerate}
-              disabled={regenLoading}
-              style={{
-                padding: "10px 12px",
-                borderRadius: 12,
-                border: "1px solid #111",
-                background: regenLoading ? "#eee" : "#111",
-                color: regenLoading ? "#333" : "white",
-                cursor: regenLoading ? "not-allowed" : "pointer",
-              }}
-            >
-              {regenLoading ? "Regenerating..." : "Regenerate Answer"}
-            </button>
-
-            <Link to="/" style={{ textDecoration: "none" }}>
-              ← Back to Dashboard
-            </Link>
-          </div>
-        </div>
-
-        <div
-          style={{
-            marginTop: 16,
-            display: "grid",
-            gridTemplateColumns: "1.2fr 0.8fr",
-            gap: 16,
-            alignItems: "start",
-          }}
-        >
-          <div
-            style={{
-              border: "1px solid #e6e6e6",
-              borderRadius: 12,
-              padding: 16,
-              background: "white",
-            }}
-          >
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-6">
+          <section className="rounded-2xl border bg-white shadow-sm p-6">
             <GuideAnswer text={guide.aiAnswer} />
-            <p style={{ marginTop: 14, color: "#666", fontSize: 13 }}>
+            <p className="mt-4 text-xs text-gray-500">
               ⚠️ Educational use only. Always confirm with your owner’s manual or a certified mechanic.
             </p>
-          </div>
+          </section>
 
-          <div
-            style={{
-              border: "1px solid #e6e6e6",
-              borderRadius: 12,
-              padding: 16,
-              background: "white",
-            }}
-          >
-            <h3 style={{ marginTop: 0 }}>Ask a follow-up</h3>
-            <ChatBox guideId={id} initialMessages={guide.chat || []} />
-          </div>
+          <aside className="rounded-2xl border bg-white shadow-sm p-6">
+            <h3 className="text-lg font-semibold">Ask a follow-up</h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Clarify steps, tools, parts, safety, or anything unclear.
+            </p>
+            <div className="mt-4">
+              <ChatBox guideId={id} initialMessages={guide.chat || []} />
+            </div>
+          </aside>
         </div>
       </div>
     </div>
   );
 }
+

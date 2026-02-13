@@ -4,12 +4,7 @@ import api from "../api/client";
 export default function ChatBox({ guideId, initialMessages }) {
   const seeded = useMemo(() => {
     if (initialMessages && initialMessages.length) return initialMessages;
-    return [
-      {
-        role: "assistant",
-        text: "Ask anything about the guide above (tools, steps, safety, parts, etc.).",
-      },
-    ];
+    return [{ role: "assistant", text: "Ask anything about the guide above (tools, steps, safety, parts, etc.)." }];
   }, [initialMessages]);
 
   const [messages, setMessages] = useState(seeded);
@@ -19,9 +14,7 @@ export default function ChatBox({ guideId, initialMessages }) {
 
   const bottomRef = useRef(null);
 
-  useEffect(() => {
-    setMessages(seeded);
-  }, [seeded]);
+  useEffect(() => setMessages(seeded), [seeded]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,18 +25,13 @@ export default function ChatBox({ guideId, initialMessages }) {
     const msg = input.trim();
     if (!msg || sending) return;
 
-    // optimistic UI
     setMessages((prev) => [...prev, { role: "user", text: msg }]);
     setInput("");
 
     try {
       setSending(true);
-      const { data } = await api.post("/api/chat", {
-        guideId,
-        message: msg,
-      });
+      const { data } = await api.post("/api/chat", { guideId, message: msg });
 
-      // backend returns full updated chat history
       if (data?.chat?.length) {
         setMessages(data.chat.map((m) => ({ role: m.role, text: m.text })));
       } else {
@@ -58,77 +46,50 @@ export default function ChatBox({ guideId, initialMessages }) {
   }
 
   return (
-    <div>
-      <div
-        style={{
-          height: 360,
-          overflowY: "auto",
-          border: "1px solid #eee",
-          borderRadius: 12,
-          padding: 10,
-          background: "#fafafa",
-          display: "grid",
-          gap: 10,
-        }}
-      >
+    <div className="space-y-3">
+      <div className="h-[360px] overflow-y-auto rounded-2xl border bg-gray-50 p-3 space-y-2">
         {messages.map((m, idx) => (
           <div
             key={idx}
-            style={{
-              padding: 10,
-              borderRadius: 12,
-              background: m.role === "user" ? "white" : "#f3f3f3",
-              border: "1px solid #e9e9e9",
-            }}
+            className={`rounded-2xl border p-3 ${
+              m.role === "user" ? "bg-white" : "bg-gray-100"
+            }`}
           >
-            <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>
+            <div className="text-xs text-gray-500 mb-1">
               {m.role === "user" ? "You" : "AutoGuide AI"}
             </div>
-            <div style={{ whiteSpace: "pre-wrap", fontSize: 14 }}>{m.text}</div>
+            <div className="whitespace-pre-wrap text-sm text-gray-900">{m.text}</div>
           </div>
         ))}
 
-        {sending ? <div style={{ fontSize: 13, color: "#666" }}>Typing...</div> : null}
+        {sending ? <div className="text-xs text-gray-500">Typing...</div> : null}
         <div ref={bottomRef} />
       </div>
 
-      <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+      <div className="flex gap-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask a follow-up question..."
-          onKeyDown={(e) => {
-            if (e.key === "Enter") send();
-          }}
-          style={{
-            flex: 1,
-            padding: 10,
-            borderRadius: 12,
-            border: "1px solid #ddd",
-          }}
+          onKeyDown={(e) => e.key === "Enter" && send()}
+          className="flex-1 rounded-xl border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/20"
         />
         <button
           onClick={send}
           disabled={sending}
-          style={{
-            padding: "10px 14px",
-            borderRadius: 12,
-            border: "1px solid #111",
-            background: sending ? "#eee" : "#111",
-            color: sending ? "#333" : "white",
-            cursor: sending ? "not-allowed" : "pointer",
-          }}
+          className="rounded-xl bg-black px-4 py-2 text-white font-medium hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           Send
         </button>
       </div>
 
-      {err ? <div style={{ color: "crimson", marginTop: 8 }}>{err}</div> : null}
+      {err ? <div className="text-sm text-red-600">{err}</div> : null}
 
-      <div style={{ color: "#777", fontSize: 12, marginTop: 10 }}>
+      <p className="text-xs text-gray-500">
         Tip: Ask “What does torque spec mean?” or “Which tools are essential?”
-      </div>
+      </p>
     </div>
   );
 }
+
 

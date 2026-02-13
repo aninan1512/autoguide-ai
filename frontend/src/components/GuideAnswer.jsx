@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 function extractSection(text, heading) {
   const start = text.indexOf(heading);
   if (start === -1) return "";
-
   const rest = text.slice(start + heading.length);
   const nextHeadingIdx = rest.indexOf("\n## ");
   const section = nextHeadingIdx === -1 ? rest : rest.slice(0, nextHeadingIdx);
@@ -11,12 +10,10 @@ function extractSection(text, heading) {
 }
 
 async function copyToClipboard(content) {
-  // Best-effort clipboard support
   try {
     await navigator.clipboard.writeText(content);
     return true;
   } catch {
-    // Fallback: old execCommand approach
     try {
       const ta = document.createElement("textarea");
       ta.value = content;
@@ -42,9 +39,6 @@ export default function GuideAnswer({ text }) {
       tools: extractSection(full, "## Tools Needed"),
       parts: extractSection(full, "## Parts / Supplies"),
       steps: extractSection(full, "## Step-by-step Instructions"),
-      mistakes: extractSection(full, "## Common Mistakes to Avoid"),
-      time: extractSection(full, "## Estimated Time + Difficulty"),
-      stop: extractSection(full, "## When to Stop and Call a Mechanic"),
       full,
     };
   }, [text]);
@@ -62,12 +56,17 @@ export default function GuideAnswer({ text }) {
   ];
 
   const shown =
-    tab === "summary" ? sections.summary :
-    tab === "steps" ? sections.steps :
-    tab === "tools" ? sections.tools :
-    tab === "parts" ? sections.parts :
-    tab === "safety" ? sections.safety :
-    sections.full;
+    tab === "summary"
+      ? sections.summary
+      : tab === "steps"
+      ? sections.steps
+      : tab === "tools"
+      ? sections.tools
+      : tab === "parts"
+      ? sections.parts
+      : tab === "safety"
+      ? sections.safety
+      : sections.full;
 
   async function handleCopy(label, content) {
     const finalText = (content || "").trim();
@@ -76,29 +75,21 @@ export default function GuideAnswer({ text }) {
       setTimeout(() => setCopiedMsg(""), 1200);
       return;
     }
-
     const ok = await copyToClipboard(finalText);
-    setCopiedMsg(ok ? `Copied ${label}!` : "Copy failed. Please try again.");
+    setCopiedMsg(ok ? `Copied ${label}!` : "Copy failed. Try again.");
     setTimeout(() => setCopiedMsg(""), 1400);
   }
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <h2 style={{ marginTop: 0, marginBottom: 0 }}>Maintenance Guide</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">Maintenance Guide</h2>
 
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => handleCopy("section", shown)}
-            style={{
-              padding: "8px 10px",
-              borderRadius: 10,
-              border: "1px solid #ddd",
-              background: "white",
-              cursor: "pointer",
-              fontSize: 13,
-            }}
-            title="Copy the currently selected section"
+            className="rounded-xl border px-3 py-2 text-sm font-medium hover:bg-gray-50"
+            title="Copy the selected section"
           >
             Copy Section
           </button>
@@ -106,67 +97,42 @@ export default function GuideAnswer({ text }) {
           {tab === "steps" ? (
             <button
               onClick={() => handleCopy("steps", sections.steps)}
-              style={{
-                padding: "8px 10px",
-                borderRadius: 10,
-                border: "1px solid #ddd",
-                background: "white",
-                cursor: "pointer",
-                fontSize: 13,
-              }}
+              className="rounded-xl border px-3 py-2 text-sm font-medium hover:bg-gray-50"
               title="Copy steps only"
             >
               Copy Steps
             </button>
           ) : null}
 
-          {copiedMsg ? (
-            <span style={{ fontSize: 13, color: "#444" }}>{copiedMsg}</span>
-          ) : null}
+          {copiedMsg ? <span className="text-sm text-gray-600">{copiedMsg}</span> : null}
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12, marginBottom: 12 }}>
+      <div className="mt-4 flex flex-wrap gap-2">
         {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            style={{
-              padding: "8px 10px",
-              borderRadius: 999,
-              border: "1px solid #ddd",
-              background: tab === t.key ? "#111" : "white",
-              color: tab === t.key ? "white" : "#111",
-              cursor: "pointer",
-              fontSize: 13,
-            }}
+            className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
+              tab === t.key ? "bg-black text-white border-black" : "hover:bg-gray-50"
+            }`}
           >
             {t.label}
           </button>
         ))}
       </div>
 
-      <div
-        style={{
-          whiteSpace: "pre-wrap",
-          lineHeight: 1.55,
-          color: "#111",
-          fontSize: 14,
-        }}
-      >
+      <div className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-gray-900">
         {shown || "No content available for this section."}
       </div>
 
       {tab !== "full" ? (
-        <div style={{ marginTop: 14, color: "#666", fontSize: 12 }}>
-          Want everything? Open the <b>Full</b> tab.
-        </div>
-      ) : (
-        <div style={{ marginTop: 14, color: "#666", fontSize: 12 }}>
-          Included sections: Summary, Safety, Tools, Parts, Steps, Mistakes, Time, When to stop.
-        </div>
-      )}
+        <p className="mt-4 text-xs text-gray-500">
+          Want everything? Open the <span className="font-semibold">Full</span> tab.
+        </p>
+      ) : null}
     </div>
   );
 }
+
 

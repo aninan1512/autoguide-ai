@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard.jsx";
 import Guide from "./pages/Guide.jsx";
-import "./App.css";
 
 export default function App() {
   return (
