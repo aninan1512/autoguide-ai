@@ -23,7 +23,10 @@ app.use(
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.get("/health", (req, res) => res.json({ ok: true }));
-
+// Root route (for visiting the Render URL directly)
+app.get("/", (req, res) => {
+  res.send("AutoGuide AI backend is running ✅ Try /health or /api endpoints.");
+});
 function buildGuidePrompt({ make, model, year, question }) {
   return `
 You are an automotive maintenance assistant.
