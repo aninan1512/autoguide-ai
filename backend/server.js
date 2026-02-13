@@ -1,178 +1,184 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import OpenAI from "openai";
-import { getDb } from "./db.js";
 
-dotenv.config();
+import { connectDB } from "./db.js";
+import Guide from "./models/Guide.js";
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+
+app.use(express.json({ limit: "1mb" }));
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      process.env.FRONTEND_URL, // optional if you deploy later
+    ].filter(Boolean),
+    credentials: true,
+  })
+);
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-app.get("/", (req, res) => {
-  res.send("AutoGuide AI backend is running. Try GET /health or POST /api/ask");
+app.get("/health", (req, res) => {
+  res.json({ ok: true });
 });
 
-app.get("/health", async (req, res) => {
-  try {
-    const db = await getDb();
-    await db.command({ ping: 1 });
-    res.json({ ok: true, message: "API + MongoDB connected" });
-  } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
-  }
-});
+function buildGuidePrompt({ make, model, year, question }) {
+  return `
+You are an automotive maintenance assistant.
 
-// Recent searches (latest first)
-app.get("/api/recent", async (req, res) => {
-  try {
-    const limit = Math.min(parseInt(req.query.limit || "8", 10), 25);
+Vehicle: ${year} ${make} ${model}
+User question: ${question}
 
-    const db = await getDb();
-    const recent = await db
-      .collection("queries")
-      .find({}, { projection: { question: 1, vehicle: 1, createdAt: 1 } })
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .toArray();
+Return a clear, structured maintenance guide with these sections (use headings):
 
-    res.json({ ok: true, recent });
-  } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
-  }
-});
-
-function safeJsonParse(text) {
-  try {
-    return JSON.parse(text);
-  } catch {
-    return null;
-  }
-}
-
-function validateResult(obj, fallbackTitle) {
-  const clean = {
-    title: typeof obj?.title === "string" ? obj.title : `Guide: ${fallbackTitle}`,
-    vehicle: obj?.vehicle ?? null,
-    difficulty: typeof obj?.difficulty === "string" ? obj.difficulty : "Medium",
-    warnings: Array.isArray(obj?.warnings) ? obj.warnings : [],
-    tools: Array.isArray(obj?.tools) ? obj.tools : [],
-    parts: Array.isArray(obj?.parts) ? obj.parts : [],
-    steps: Array.isArray(obj?.steps) ? obj.steps : [],
-    notes: Array.isArray(obj?.notes) ? obj.notes : [],
-    sourcesUsed: Array.isArray(obj?.sourcesUsed) ? obj.sourcesUsed : [],
-  };
-
-  clean.steps = clean.steps.map((s, i) => ({
-    step: typeof s?.step === "number" ? s.step : i + 1,
-    text: typeof s?.text === "string" ? s.text : "",
-    tips: Array.isArray(s?.tips) ? s.tips : [],
-  }));
-
-  clean.tools = clean.tools.map((t) => ({
-    name: typeof t?.name === "string" ? t.name : "",
-    notes: typeof t?.notes === "string" ? t.notes : "",
-  }));
-
-  clean.parts = clean.parts.map((p) => ({
-    name: typeof p?.name === "string" ? p.name : "",
-    qty: typeof p?.qty === "number" ? p.qty : 1,
-    notes: typeof p?.notes === "string" ? p.notes : "",
-  }));
-
-  return clean;
-}
-
-// Ask endpoint (AI + Save to MongoDB)
-app.post("/api/ask", async (req, res) => {
-  try {
-    const { question, vehicle } = req.body;
-
-    if (!question || typeof question !== "string") {
-      return res.status(400).json({ ok: false, error: "question is required" });
-    }
-
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({
-        ok: false,
-        error: "Missing OPENAI_API_KEY in backend/.env",
-      });
-    }
-
-    const vehicleText = vehicle
-      ? `${vehicle.year || ""} ${vehicle.make || ""} ${vehicle.model || ""}`.trim()
-      : "Not specified";
-
-    const systemPrompt = `
-You are AutoGuide AI, an automotive maintenance assistant.
-Return ONLY valid JSON (no markdown, no backticks). Follow this schema exactly:
-
-{
-  "title": string,
-  "vehicle": { "make": string, "model": string, "year": number } | null,
-  "difficulty": "Easy" | "Medium" | "Hard",
-  "warnings": string[],
-  "tools": [{ "name": string, "notes": string }],
-  "parts": [{ "name": string, "qty": number, "notes": string }],
-  "steps": [{ "step": number, "text": string, "tips": string[] }],
-  "notes": string[],
-  "sourcesUsed": []
-}
+1) Summary
+2) Safety Warnings
+3) Tools Needed
+4) Parts / Supplies
+5) Step-by-step Instructions (numbered)
+6) Common Mistakes to Avoid
+7) Estimated Time + Difficulty
+8) When to Stop and Call a Mechanic
 
 Rules:
-- Be practical and detailed. Provide a complete tool list and parts list.
-- If the question is vague, assume a typical approach and mention what can vary by year/trim.
-- Never invent exact torque specs or manufacturer-only data; say “check owner/service manual” if needed.
-- Include safety warnings for risky tasks (lifting vehicle, brakes, fuel, electrical).
-- Keep steps clear and in order.
-    `.trim();
+- Keep it practical and beginner-friendly.
+- Avoid dangerous advice.
+- If unsure, say what to verify in the owner's manual or with a mechanic.
+`;
+}
 
-    const userPrompt = `
-Question: ${question}
-Vehicle: ${vehicleText}
-    `.trim();
+function buildChatPrompt({ vehicle, originalQuestion, aiAnswer, followUp }) {
+  return `
+You are a helpful automotive assistant.
+You must ONLY answer based on the provided context. If context is missing, ask a clarifying question.
 
-    const completion = await client.chat.completions.create({
-      model: "gpt-4.1-mini",
-      temperature: 0.4,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-    });
+Vehicle: ${vehicle.year} ${vehicle.make} ${vehicle.model}
 
-    const raw = completion.choices?.[0]?.message?.content || "";
-    const parsed = safeJsonParse(raw);
+Original question: ${originalQuestion}
 
-    if (!parsed) {
-      return res.status(500).json({
-        ok: false,
-        error: "AI returned an unexpected format. Try again.",
-      });
+Original guide answer:
+${aiAnswer}
+
+User follow-up question:
+${followUp}
+
+Reply in a short, clear way. Use bullet points if helpful.
+`;
+}
+
+// ✅ Create guide (generate AI + store)
+app.post("/api/guides", async (req, res) => {
+  try {
+    const { make, model, year, question } = req.body;
+
+    if (!make || !model || !year || !question) {
+      return res.status(400).json({ error: "Missing required fields." });
     }
 
-    const result = validateResult(parsed, question);
+    const prompt = buildGuidePrompt({ make, model, year, question });
 
-    // Save to MongoDB (recent searches)
-    const db = await getDb();
-    await db.collection("queries").insertOne({
-      question,
-      vehicle: vehicle || null,
-      resultSummary: {
-        title: result.title,
-        difficulty: result.difficulty,
-      },
-      createdAt: new Date(),
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: prompt,
     });
 
-    res.json({ ok: true, result });
-  } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    const aiAnswer =
+      response.output_text?.trim() || "No answer returned. Please try again.";
+
+    const doc = await Guide.create({
+      vehicle: { make, model, year },
+      question,
+      aiAnswer,
+    });
+
+    res.json({
+      id: doc._id,
+      vehicle: doc.vehicle,
+      question: doc.question,
+      aiAnswer: doc.aiAnswer,
+      createdAt: doc.createdAt,
+    });
+  } catch (err) {
+    console.error("POST /api/guides error:", err);
+    res.status(500).json({ error: "Failed to generate guide." });
+  }
+});
+
+// ✅ Recent searches (left sidebar)
+app.get("/api/searches", async (req, res) => {
+  try {
+    const limit = Math.min(Number(req.query.limit || 10), 30);
+
+    const items = await Guide.find({})
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .select("vehicle question createdAt");
+
+    res.json(items);
+  } catch (err) {
+    console.error("GET /api/searches error:", err);
+    res.status(500).json({ error: "Failed to fetch searches." });
+  }
+});
+
+// ✅ Fetch one guide (Results page)
+app.get("/api/guides/:id", async (req, res) => {
+  try {
+    const doc = await Guide.findById(req.params.id);
+    if (!doc) return res.status(404).json({ error: "Guide not found." });
+
+    res.json(doc);
+  } catch (err) {
+    console.error("GET /api/guides/:id error:", err);
+    res.status(500).json({ error: "Failed to fetch guide." });
+  }
+});
+
+// ✅ Follow-up chat about the answer
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { guideId, message } = req.body;
+
+    if (!guideId || !message) {
+      return res.status(400).json({ error: "Missing guideId or message." });
+    }
+
+    const guide = await Guide.findById(guideId);
+    if (!guide) return res.status(404).json({ error: "Guide not found." });
+
+    const prompt = buildChatPrompt({
+      vehicle: guide.vehicle,
+      originalQuestion: guide.question,
+      aiAnswer: guide.aiAnswer,
+      followUp: message,
+    });
+
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: prompt,
+    });
+
+    const reply =
+      response.output_text?.trim() || "I couldn't generate a reply. Try again.";
+
+    res.json({ reply });
+  } catch (err) {
+    console.error("POST /api/chat error:", err);
+    res.status(500).json({ error: "Failed to chat." });
   }
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => console.log(`✅ Backend running on ${PORT}`));
+  })
+  .catch((e) => {
+    console.error("❌ DB connection failed:", e);
+    process.exit(1);
+  });

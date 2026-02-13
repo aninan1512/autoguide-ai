@@ -1,22 +1,17 @@
-import { MongoClient } from "mongodb";
-import dotenv from "dotenv";
+import mongoose from "mongoose";
 
-dotenv.config();
+export async function connectDB() {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) throw new Error("Missing MONGODB_URI in .env");
 
-let client;
-let db;
+  mongoose.set("strictQuery", true);
 
-export async function getDb() {
-  if (db) return db;
+  await mongoose.connect(uri, {
+    dbName: process.env.DB_NAME || "autoguide_ai",
+  });
 
-  if (!process.env.MONGODB_URI) {
-    throw new Error("Missing MONGODB_URI in backend/.env");
-  }
-
-  client = new MongoClient(process.env.MONGODB_URI);
-  await client.connect();
-
-  db = client.db(process.env.DB_NAME || "autoguide_ai");
-  return db;
+  console.log("✅ MongoDB connected:", mongoose.connection.name);
 }
+
+
 
