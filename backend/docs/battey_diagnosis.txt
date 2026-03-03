@@ -1,0 +1,34 @@
+Battery Diagnosis Guide
+
+Common Symptoms
+
+* Car will not start
+* Clicking sound when turning the key
+* Dashboard lights dim or flicker
+* Electrical accessories not working
+
+Possible Causes
+
+* Dead battery
+* Corroded battery terminals
+* Loose battery cables
+* Old battery (typically older than 3–5 years)
+* Faulty alternator not charging the battery
+
+Diagnostic Steps
+
+1. Check battery voltage with a multimeter. A healthy battery should read about 12.6 volts when the engine is off.
+2. Inspect battery terminals for corrosion or loose connections.
+3. Try jump-starting the vehicle.
+4. Test the alternator output with the engine running (around 13.7–14.7 volts).
+5. Replace the battery if it cannot hold a charge.
+
+Safety Notes
+
+* Always disconnect the negative terminal first.
+* Wear protective gloves when handling battery terminals.
+
+When to visit a mechanic
+
+* If the alternator is suspected to be faulty.
+* If electrical issues continue after replacing the battery.

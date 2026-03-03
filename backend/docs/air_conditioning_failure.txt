@@ -1,0 +1,25 @@
+Air Conditioning Failure Diagnosis
+
+Common Symptoms
+
+* AC blowing warm air
+* Weak airflow
+* Strange noises from compressor
+
+Possible Causes
+
+* Low refrigerant level
+* Faulty AC compressor
+* Clogged cabin air filter
+* Electrical issue in AC system
+
+Diagnostic Steps
+
+1. Check cabin air filter condition.
+2. Inspect AC compressor clutch operation.
+3. Check refrigerant pressure levels.
+4. Inspect AC system fuses and relays.
+
+When to visit a mechanic
+
+* AC refrigerant systems require specialized equipment.

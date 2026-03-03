@@ -1,0 +1,30 @@
+Alternator Failure Symptoms
+
+Common Symptoms
+
+* Battery warning light on dashboard
+* Dim headlights
+* Electrical components malfunctioning
+* Battery repeatedly dying
+
+Possible Causes
+
+* Worn alternator bearings
+* Faulty voltage regulator
+* Loose serpentine belt
+* Damaged wiring
+
+Diagnostic Steps
+
+1. Test battery voltage with the engine running.
+2. Inspect alternator belt tension.
+3. Listen for unusual noises from the alternator.
+4. Use a multimeter to verify charging voltage.
+
+Expected charging voltage
+
+* Typically between 13.7 and 14.7 volts.
+
+When to visit a mechanic
+
+* If alternator output is below recommended voltage.

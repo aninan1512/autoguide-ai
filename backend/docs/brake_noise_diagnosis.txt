@@ -1,0 +1,33 @@
+Brake Noise Diagnosis Guide
+
+Common Symptoms
+
+* Squeaking noise while braking
+* Grinding noise
+* Vibrations during braking
+* Reduced braking performance
+
+Possible Causes
+
+* Worn brake pads
+* Contaminated brake pads
+* Warped brake rotors
+* Loose brake components
+
+Diagnostic Steps
+
+1. Inspect brake pads for wear.
+2. Check rotor surface for grooves or damage.
+3. Ensure caliper bolts are secure.
+4. Clean brake components with brake cleaner.
+5. Replace worn brake pads or rotors.
+
+Safety Notes
+
+* Brake systems are critical for vehicle safety.
+* If unsure about repairs, consult a professional mechanic.
+
+When to visit a mechanic
+
+* If grinding noises persist.
+* If braking performance decreases significantly.

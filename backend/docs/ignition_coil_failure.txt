@@ -1,0 +1,25 @@
+Ignition Coil Failure Guide
+
+Common Symptoms
+
+* Engine misfires
+* Rough idle
+* Reduced fuel efficiency
+* Check engine light
+
+Possible Causes
+
+* Worn ignition coil
+* Faulty spark plugs
+* Damaged ignition wires
+
+Diagnostic Steps
+
+1. Scan vehicle for OBD codes.
+2. Inspect spark plugs.
+3. Swap ignition coils to isolate faulty units.
+
+Tools Needed
+
+* OBD scanner
+* Socket wrench

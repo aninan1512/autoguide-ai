@@ -1,0 +1,26 @@
+Engine Overheating Causes
+
+Common Symptoms
+
+* Temperature gauge rising
+* Steam from engine bay
+* Coolant warning light
+
+Possible Causes
+
+* Low coolant level
+* Faulty thermostat
+* Radiator blockage
+* Broken water pump
+* Cooling fan malfunction
+
+Diagnostic Steps
+
+1. Check coolant reservoir level.
+2. Inspect radiator hoses for leaks.
+3. Ensure cooling fans activate when engine temperature rises.
+4. Inspect radiator cap condition.
+
+Safety Notes
+
+* Never open a hot radiator cap.

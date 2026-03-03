@@ -1,0 +1,35 @@
+Headlight Troubleshooting Guide
+
+Common Symptoms
+
+* One headlight not working
+* Both headlights not turning on
+* Flickering headlights
+* Dim headlights
+
+Possible Causes
+
+* Burned out bulb
+* Blown fuse
+* Faulty relay
+* Wiring damage
+* Faulty headlight switch
+
+Diagnostic Steps
+
+1. Inspect the headlight bulb for visible damage.
+2. Check the headlight fuse in the fuse box.
+3. Swap the relay with a known working relay if possible.
+4. Inspect wiring near the headlight housing.
+5. Test the headlight switch for proper operation.
+
+Tools Needed
+
+* Screwdriver
+* Multimeter
+* Replacement bulb
+
+Safety Notes
+
+* Disconnect battery before working on wiring.
+* Avoid touching halogen bulbs directly with bare hands.

@@ -1,0 +1,25 @@
+Transmission Slipping Diagnosis
+
+Common Symptoms
+
+* Engine revs increase but vehicle does not accelerate
+* Delayed gear engagement
+* Harsh gear shifts
+
+Possible Causes
+
+* Low transmission fluid
+* Worn clutch plates
+* Faulty transmission solenoid
+* Transmission fluid contamination
+
+Diagnostic Steps
+
+1. Check transmission fluid level and condition.
+2. Inspect transmission for leaks.
+3. Scan vehicle for transmission error codes.
+4. Test drive vehicle to observe shifting behavior.
+
+When to visit a mechanic
+
+* Transmission repairs require specialized tools.

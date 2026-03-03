@@ -1,0 +1,26 @@
+Fuse and Relay Troubleshooting
+
+Common Symptoms
+
+* Electrical components not working
+* Headlights or horn not functioning
+* Power windows failing
+
+Possible Causes
+
+* Blown fuse
+* Faulty relay
+* Wiring short circuit
+* Loose electrical connection
+
+Diagnostic Steps
+
+1. Locate the fuse box using the vehicle manual.
+2. Inspect fuses for broken metal strips.
+3. Replace blown fuses with correct amperage.
+4. Swap relays with identical relays for testing.
+5. Inspect wiring for damage or corrosion.
+
+Safety Notes
+
+* Always turn off the ignition before replacing fuses.

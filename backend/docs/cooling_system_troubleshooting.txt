@@ -1,0 +1,27 @@
+Cooling System Troubleshooting
+
+Common Symptoms
+
+* Engine overheating
+* Coolant leaks
+* Heater not producing heat
+
+Possible Causes
+
+* Low coolant level
+* Failed thermostat
+* Radiator blockage
+* Faulty water pump
+* Cooling fan malfunction
+
+Diagnostic Steps
+
+1. Inspect coolant reservoir level.
+2. Check radiator hoses for leaks or cracks.
+3. Verify cooling fan operation.
+4. Inspect radiator for debris blockage.
+5. Test thermostat functionality.
+
+Safety Notes
+
+* Never remove radiator cap while engine is hot.

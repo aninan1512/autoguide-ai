@@ -1,0 +1,26 @@
+Rough Idle Diagnosis
+
+Common Symptoms
+
+* Engine vibration while idling
+* Engine stalling
+* Unstable RPM
+
+Possible Causes
+
+* Dirty throttle body
+* Vacuum leak
+* Faulty spark plugs
+* Clogged fuel injector
+
+Diagnostic Steps
+
+1. Inspect vacuum hoses for cracks.
+2. Clean throttle body using cleaner.
+3. Check spark plug condition.
+4. Run fuel injector cleaner through the fuel system.
+
+Tools Needed
+
+* OBD scanner
+* throttle body cleaner

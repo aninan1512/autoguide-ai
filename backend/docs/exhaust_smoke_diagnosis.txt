@@ -1,0 +1,33 @@
+Exhaust Smoke Diagnosis
+
+Common Symptoms
+
+* Blue smoke from exhaust
+* White smoke from exhaust
+* Black smoke from exhaust
+
+Possible Causes
+
+Blue Smoke
+
+* Burning engine oil
+* Worn piston rings
+* Valve seal leaks
+
+White Smoke
+
+* Coolant leak
+* Blown head gasket
+
+Black Smoke
+
+* Excess fuel
+* Faulty fuel injector
+* Clogged air filter
+
+Diagnostic Steps
+
+1. Observe smoke color carefully.
+2. Check engine oil level.
+3. Inspect coolant level.
+4. Scan vehicle for engine codes.

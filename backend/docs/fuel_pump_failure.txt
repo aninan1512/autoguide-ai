@@ -1,0 +1,23 @@
+Fuel Pump Failure Diagnosis
+
+Common Symptoms
+
+* Engine cranks but will not start
+* Loss of power while driving
+* Whining noise from fuel tank
+
+Possible Causes
+
+* Failed fuel pump
+* Clogged fuel filter
+* Electrical issues
+
+Diagnostic Steps
+
+1. Listen for fuel pump sound when key is turned.
+2. Check fuel pressure with gauge.
+3. Inspect fuel pump fuse and relay.
+
+When to visit a mechanic
+
+* If fuel pressure is below recommended levels.

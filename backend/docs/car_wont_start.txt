@@ -1,0 +1,27 @@
+Car Won't Start Diagnosis
+
+Common Symptoms
+
+* Engine does not crank
+* Clicking noise when starting
+* Engine cranks but does not start
+
+Possible Causes
+
+* Dead battery
+* Faulty starter motor
+* Bad ignition switch
+* Fuel pump failure
+* Empty fuel tank
+
+Diagnostic Steps
+
+1. Check battery voltage.
+2. Listen for clicking noises indicating starter issues.
+3. Ensure the fuel pump activates when the key is turned.
+4. Check fuses related to starting systems.
+5. Inspect starter motor connections.
+
+Safety Notes
+
+* Always ensure the vehicle is in park or neutral before testing.

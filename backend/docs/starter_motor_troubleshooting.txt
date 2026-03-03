@@ -1,0 +1,33 @@
+Starter Motor Troubleshooting Guide
+
+Common Symptoms
+
+* Engine does not crank when turning the key
+* Single clicking noise when starting
+* Starter spins but engine does not engage
+
+Possible Causes
+
+* Faulty starter motor
+* Weak battery
+* Bad starter solenoid
+* Corroded battery cables
+* Faulty ignition switch
+
+Diagnostic Steps
+
+1. Check battery voltage before testing the starter.
+2. Listen for clicking sounds from the starter solenoid.
+3. Inspect wiring connections at the starter motor.
+4. Tap the starter lightly with a tool while attempting to start.
+5. Test voltage at the starter terminals.
+
+Tools Needed
+
+* Multimeter
+* Socket wrench
+* Battery tester
+
+When to visit a mechanic
+
+* If starter replacement is required.

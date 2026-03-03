@@ -1,0 +1,18 @@
+Common OBD-II Codes
+
+P0300
+Random engine misfire detected.
+
+P0171
+System too lean (bank 1).
+
+P0420
+Catalyst system efficiency below threshold.
+
+P0442
+Evaporative emission system leak detected.
+
+Diagnostic Tips
+
+* Use an OBD scanner to read codes.
+* Address misfires immediately to avoid engine damage.

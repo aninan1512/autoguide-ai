@@ -1,0 +1,29 @@
+Vehicle Electrical System Basics
+
+Components
+
+* Battery
+* Alternator
+* Starter motor
+* Wiring harness
+* Fuse box
+* Relays
+
+Common Issues
+
+* Blown fuse
+* Loose wiring
+* Corroded connectors
+* Faulty relays
+
+Basic Diagnostic Steps
+
+1. Check battery voltage.
+2. Inspect fuse box for blown fuses.
+3. Test relays by swapping with known working ones.
+4. Inspect wiring for damage.
+
+Tools Needed
+
+* Multimeter
+* Test light
