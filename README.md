@@ -20,23 +20,13 @@ This project was built to go beyond a basic chatbot demo and showcase practical 
 ## Live Demo
 
 **Frontend (Vercel):**  
-`<YOUR_VERCEL_URL>`
+https://autoguide-ai.vercel.app
 
 **Backend API Health Check (Render):**  
 `https://autoguide-ai.onrender.com/health`
 
 ---
 
-## Screenshots
-
-Add your screenshots after uploading them to your repository.
-
-```md
-![Dashboard](./screenshots/dashboard.png)
-![Generated Guide](./screenshots/generated-guide.png)
-![Agent Trace](./screenshots/agent-trace.png)
-![Sources Panel](./screenshots/sources-panel.png)
-```
 
 ---
 
@@ -462,6 +452,7 @@ npm run ingest
 ## Future Improvements
 
 - Multi-turn conversational repair assistant
+- Save guide history to the database
 - User accounts and persistent saved guides
 - Streaming responses from the backend
 - PDF export for generated repair plans
@@ -486,7 +477,7 @@ Deployed the frontend on **Vercel** and backend on **Render**, integrating vecto
 ## Author
 
 **Aaron Ninan**  
-GitHub: (https://github.com/aninan1512)
+GitHub: [aninan1512](https://github.com/aninan1512)
 
 ---
 
